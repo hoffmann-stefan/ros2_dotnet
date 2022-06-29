@@ -1,0 +1,83 @@
+$ ros2 run rcldotnet_examples rcldotnet_guard_condition
+rmw_fastrtps_cpp
+ThreadId: 1
+2022-06-29T11:18:04.0538064+02:00 ThreadId: 1 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:04.0610524+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:04.0613053+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:04.0617290+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:04.0637237+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:04.5640404+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:04.5643150+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:05.0635021+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:05.0635578+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:05.0636181+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:05.0637466+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:05.5640316+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:05.5642642+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:06.0644099+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:06.0644854+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:06.0646589+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:06.0649019+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:06.5652305+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:06.5654583+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:07.0655165+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:07.0656442+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:07.0657459+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:07.0659608+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:07.5663083+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:07.5665771+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:08.0666496+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:08.0667777+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:08.0669019+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:08.0671665+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:08.5675786+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:08.5678334+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:09.0678808+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:09.0681750+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:09.0684275+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:09.0687320+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:09.5693071+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:09.5694989+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:10.0693217+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:10.0694448+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:10.0695638+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:10.0698150+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:10.5704322+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:10.5706943+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:11.0704566+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:11.0705225+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:11.0705979+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:11.0706900+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:11.5709588+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:11.5711594+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:12.0712608+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:12.0713961+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:12.0715124+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:12.0717579+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:12.5721676+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:12.5724525+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:13.0721233+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:13.0721984+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): wait done
+2022-06-29T11:18:13.0723242+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): trigger guard condition callback
+2022-06-29T11:18:13.0724226+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:13.5726046+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:13.5726963+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:14.0731557+02:00 ThreadId: 4 GuardCondition.Trigger(): guard condition was triggered
+2022-06-29T11:18:14.0732933+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:14.0735032+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:14.5739703+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:14.5741613+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:15.0745775+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:15.0747819+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:15.5753164+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:15.5755453+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:16.0760885+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:16.0763506+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:16.5771038+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:16.5773719+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:17.0777013+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:17.0779539+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:17.5784777+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:17.5787394+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset
+2022-06-29T11:18:18.0790355+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): timeout wait
+2022-06-29T11:18:18.0791211+02:00 ThreadId: 1 RCLdotnet.SpinOnce(): add guard condition to waitset

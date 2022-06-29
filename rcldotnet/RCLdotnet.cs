@@ -664,14 +664,17 @@ namespace ROS2
 
                 foreach (var guardCondition in node.GuardConditions)
                 {
+                    Console.WriteLine($"{DateTimeOffset.Now:O} ThreadId: {Environment.CurrentManagedThreadId} RCLdotnet.SpinOnce(): add guard condition to waitset");
                     WaitSetAddGuardCondition(waitSetHandle, guardCondition.Handle);
                 }
 
                 bool ready = Wait(waitSetHandle, timeout);
                 if (!ready)
                 {
+                    Console.WriteLine($"{DateTimeOffset.Now:O} ThreadId: {Environment.CurrentManagedThreadId} RCLdotnet.SpinOnce(): timeout wait");
                     return; // timeout
                 }
+                Console.WriteLine($"{DateTimeOffset.Now:O} ThreadId: {Environment.CurrentManagedThreadId} RCLdotnet.SpinOnce(): wait done");
 
                 int subscriptionIndex = 0;
                 foreach (Subscription subscription in node.Subscriptions)
@@ -736,6 +739,7 @@ namespace ROS2
                 {
                     if (RCLdotnetDelegates.native_rcl_wait_set_guard_condition_ready(waitSetHandle, guardConditionIndex))
                     {
+                        Console.WriteLine($"{DateTimeOffset.Now:O} ThreadId: {Environment.CurrentManagedThreadId} RCLdotnet.SpinOnce(): trigger guard condition callback");
                         guardCondition.TriggerCallback();
                     }
 
