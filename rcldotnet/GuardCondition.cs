@@ -60,6 +60,9 @@ namespace ROS2
         public void Trigger()
         {
             RCLRet ret = GuardConditionDelegates.native_rcl_trigger_guard_condition(Handle);
+
+            Console.WriteLine($"{DateTimeOffset.Now:O} ThreadId: {Environment.CurrentManagedThreadId} GuardCondition.Trigger(): guard condition was triggered");
+
             RCLExceptionHelper.CheckReturnValue(ret);
         }
 
