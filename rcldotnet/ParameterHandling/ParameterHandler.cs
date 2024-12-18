@@ -120,12 +120,14 @@ namespace ROS2
 
         #endregion
 
-        public void AddPostSetParameterCallback(Action<List<Parameter>> callback)
+        public IDisposable AddPostSetParameterCallback(Action<List<Parameter>> callback)
         {
+            var disposable = new PostSetParameterDisposable(this, callback);
             _postSetParameterCallbacks += callback;
+            return disposable;
         }
 
-        public void RemovePostSetParameterCallback(Action<List<Parameter>> callback)
+        internal void RemovePostSetParameterCallback(Action<List<Parameter>> callback)
         {
             _postSetParameterCallbacks -= callback;
         }
@@ -475,5 +477,22 @@ namespace ROS2
         }
 
         public bool HasParameter(string name) => _parameters.ContainsKey(name);
+
+        private class PostSetParameterDisposable : IDisposable
+        {
+            private readonly Action<List<Parameter>> _callback;
+            private readonly ParameterHandler _handler;
+
+            public PostSetParameterDisposable(ParameterHandler handler, Action<List<Parameter>> callback)
+            {
+                _handler = handler;
+                _callback = callback;
+            }
+
+            public void Dispose()
+            {
+                _handler.RemovePostSetParameterCallback(_callback);
+            }
+        }
     }
 }

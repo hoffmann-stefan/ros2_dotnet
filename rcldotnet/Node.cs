@@ -514,11 +514,13 @@ namespace ROS2
 
         public bool HasParameter(string name) => _parameterHandler.HasParameter(name);
 
-        public void AddPostSetParameterCallback(Action<List<Parameter>> callback) =>
+        /// <summary>
+        /// Add a callback that gets triggered after parameters are set successfully.
+        /// </summary>
+        /// <param name="callback">The action to be invoked parameters are set successfully</param>
+        /// <returns>An <see cref="IDisposable"/> that should be disposed to stop listening for changes.</returns>
+        public IDisposable AddPostSetParameterCallback(Action<List<Parameter>> callback) =>
             _parameterHandler.AddPostSetParameterCallback(callback);
-
-        public void RemovePostSetParameterCallback(Action<List<Parameter>> callback) =>
-            _parameterHandler.RemovePostSetParameterCallback(callback);
 
         #endregion
     }
