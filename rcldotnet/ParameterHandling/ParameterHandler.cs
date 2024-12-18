@@ -44,7 +44,7 @@ namespace ROS2
 
         private readonly Publisher<ParameterEvent> _publisherEvent;
 
-        private Action<List<Parameter>> _onSetParameterCallback;
+        private Action<List<Parameter>> _postSetParameterCallbacks;
 
         internal ParameterHandler(Node node)
         {
@@ -120,14 +120,14 @@ namespace ROS2
 
         #endregion
 
-        public void AddOnSetParameterCallback(Action<List<Parameter>> callback)
+        public void AddPostSetParameterCallback(Action<List<Parameter>> callback)
         {
-            _onSetParameterCallback += callback;
+            _postSetParameterCallbacks += callback;
         }
 
-        public void RemoveOnSetParameterCallback(Action<List<Parameter>> callback)
+        public void RemovePostSetParameterCallback(Action<List<Parameter>> callback)
         {
-            _onSetParameterCallback -= callback;
+            _postSetParameterCallbacks -= callback;
         }
 
         private ParameterEvent GenerateParameterEventMessage()
@@ -144,7 +144,7 @@ namespace ROS2
             ParameterEvent parameterEvent = GenerateParameterEventMessage();
             parameterEvent.NewParameters.AddRange(parameters);
             _publisherEvent.Publish(parameterEvent);
-            _onSetParameterCallback?.Invoke(parameters);
+            _postSetParameterCallbacks?.Invoke(parameters);
         }
 
         private void PublishParametersChangedEvent(IEnumerable<Parameter> parameters)
@@ -469,7 +469,7 @@ namespace ROS2
             }
 
             PublishParametersChangedEvent(parameters);
-            _onSetParameterCallback?.Invoke(parameters);
+            _postSetParameterCallbacks?.Invoke(parameters);
 
             return result;
         }

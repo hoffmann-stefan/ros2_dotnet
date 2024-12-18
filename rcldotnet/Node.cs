@@ -163,7 +163,7 @@ namespace ROS2
             _timers = new List<Timer>();
 
             _parameterHandler = new ParameterHandler(this);
-            _parameterHandler.AddOnSetParameterCallback(OnSetParameters);
+            _parameterHandler.AddPostSetParameterCallback(OnSetParameters);
             _parameterHandler.DeclareParameter(ParameterNameSimulatedTime, false);
         }
 
@@ -514,11 +514,11 @@ namespace ROS2
 
         public bool HasParameter(string name) => _parameterHandler.HasParameter(name);
 
-        public void AddOnSetParameterCallback(Action<List<Parameter>> callback) =>
-            _parameterHandler.AddOnSetParameterCallback(callback);
+        public void AddPostSetParameterCallback(Action<List<Parameter>> callback) =>
+            _parameterHandler.AddPostSetParameterCallback(callback);
 
-        public void RemoveOnSetParameterCallback(Action<List<Parameter>> callback) =>
-            _parameterHandler.RemoveOnSetParameterCallback(callback);
+        public void RemovePostSetParameterCallback(Action<List<Parameter>> callback) =>
+            _parameterHandler.RemovePostSetParameterCallback(callback);
 
         #endregion
     }
