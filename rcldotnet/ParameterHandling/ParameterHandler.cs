@@ -82,7 +82,13 @@ namespace ROS2
 
         private void OnGetParametersServiceRequest(GetParameters_Request request, GetParameters_Response response)
         {
-            response.Values.AddRange(GetParameters(request.Names));
+            foreach (string parameterName in request.Names)
+            {
+                if (_parameters.TryGetValue(parameterName, out Parameter parameter))
+                {
+                    response.Values.Add(parameter.Value);
+                }
+            }
         }
 
         private void OnListParametersServiceRequest(ListParameters_Request request, ListParameters_Response response)
@@ -303,6 +309,17 @@ namespace ROS2
             PublishParametersDeletedEvent(new List<Parameter> { parameter });
         }
 
+        private Parameter CloneParameter(Parameter toClone)
+        {
+            Parameter clone = new Parameter
+            {
+                Name = toClone.Name,
+                Value = CloneParameterValue(toClone.Value)
+            };
+
+            return clone;
+        }
+
         private ParameterValue CloneParameterValue(ParameterValue toClone)
         {
             byte type = toClone.Type;
@@ -347,25 +364,25 @@ namespace ROS2
             return clone;
         }
 
-        public ParameterValue GetParameter(string name)
+        public Parameter GetParameter(string name)
         {
             if (_parameters.TryGetValue(name, out Parameter parameter))
             {
-                return CloneParameterValue(parameter.Value);
+                return CloneParameter(parameter);
             }
 
             throw new ParameterNotDeclaredException(name);
         }
 
-        public List<ParameterValue> GetParameters(IEnumerable<string> names)
+        public List<Parameter> GetParameters(IEnumerable<string> names)
         {
-            List<ParameterValue> results = new List<ParameterValue>();
+            List<Parameter> results = new List<Parameter>();
 
             foreach (string parameterName in names)
             {
                 if (_parameters.TryGetValue(parameterName, out Parameter parameter))
                 {
-                    results.Add(CloneParameterValue(parameter.Value));
+                    results.Add(CloneParameter(parameter));
                 }
             }
 

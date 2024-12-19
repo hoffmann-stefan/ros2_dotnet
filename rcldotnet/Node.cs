@@ -500,9 +500,9 @@ namespace ROS2
 
         public void UndeclareParameter(string name) => _parameterHandler.UndeclareParameter(name);
 
-        public List<ParameterValue> GetParameters(IEnumerable<string> names) => _parameterHandler.GetParameters(names);
+        public List<Parameter> GetParameters(IEnumerable<string> names) => _parameterHandler.GetParameters(names);
 
-        public ParameterValue GetParameter(string name) => _parameterHandler.GetParameter(name);
+        public Parameter GetParameter(string name) => _parameterHandler.GetParameter(name);
 
         public List<SetParametersResult> SetParameters(List<Parameter> parameters) =>
             _parameterHandler.SetParameters(parameters);
