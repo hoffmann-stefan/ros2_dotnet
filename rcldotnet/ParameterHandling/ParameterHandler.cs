@@ -146,7 +146,6 @@ namespace ROS2
             ParameterEvent parameterEvent = GenerateParameterEventMessage();
             parameterEvent.NewParameters.AddRange(parameters);
             _publisherEvent.Publish(parameterEvent);
-            _postSetParameterCallbacks?.Invoke(parameters);
         }
 
         private void PublishParametersChangedEvent(IEnumerable<Parameter> parameters)
@@ -218,7 +217,9 @@ namespace ROS2
             _parameters.Add(name, declaredParameter);
             _descriptors.Add(name, descriptor);
 
-            PublishParametersDeclaredEvent(new List<Parameter> { declaredParameter });
+            var declaredParameters = new List<Parameter> { declaredParameter };
+            PublishParametersDeclaredEvent(declaredParameters);
+            _postSetParameterCallbacks?.Invoke(declaredParameters);
         }
 
         public void DeclareParameter(string name, bool defaultValue = false, ParameterDescriptor descriptor = null)
