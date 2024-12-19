@@ -45,6 +45,7 @@ set(CS_SOURCES
   GuidExtensions.cs
   MessageStaticMemberCache.cs
   Node.cs
+  Parameter.cs
   Publisher.cs
   QosProfile.cs
   QoSProfileDelegates.cs
