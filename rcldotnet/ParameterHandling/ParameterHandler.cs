@@ -119,7 +119,10 @@ namespace ROS2
 
         private void OnSetParametersServiceRequest(SetParameters_Request request, SetParameters_Response response)
         {
-            response.Results.AddRange(SetParameters(request.Parameters));
+            foreach (ParameterMsg source in request.Parameters)
+            {
+                response.Results.Add(SetParametersAtomically(new List<ParameterMsg> { source }));
+            }
         }
 
         private void OnSetParametersAtomicallyServiceRequest(SetParametersAtomically_Request request, SetParametersAtomically_Response response)
@@ -443,18 +446,6 @@ namespace ROS2
                 default:
                     throw new InvalidParameterTypeException(source.Value.Type);
             }
-        }
-
-        private List<SetParametersResult> SetParameters(List<ParameterMsg> parameters)
-        {
-            List<SetParametersResult> results = new List<SetParametersResult>();
-
-            foreach (ParameterMsg source in parameters)
-            {
-                results.Add(SetParametersAtomically(new List<ParameterMsg> { source }));
-            }
-
-            return results;
         }
 
         private SetParametersResult SetParametersAtomically(List<ParameterMsg> parameters)
