@@ -18,7 +18,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using rcl_interfaces.msg;
 using ROS2.Utils;
-using ParameterMsg = rcl_interfaces.msg.Parameter;
 
 namespace ROS2
 {
@@ -202,14 +201,17 @@ namespace ROS2
 
         private Subscription<rosgraph_msgs.msg.Clock> ClockSubscription { get; set; }
 
-        private void OnSetParameters(List<ParameterMsg> parameters)
+        private void OnSetParameters(List<Parameter> parameters)
         {
-            ParameterMsg simulatedTimeParameter = parameters.Find(parameter => parameter.Name == ParameterNameSimulatedTime);
+            Parameter simulatedTimeParameter = parameters.Find(parameter => parameter.Name == ParameterNameSimulatedTime);
             if (simulatedTimeParameter == null) return;
+            if (!simulatedTimeParameter.TryGetBool(out bool useSimulatedTime))
+            {
+                return;
+            }
 
             // Update clock setup if applicable.
             bool subscribedToClock = ClockSubscription != null;
-            bool useSimulatedTime = simulatedTimeParameter.Value.BoolValue;
             if (useSimulatedTime == subscribedToClock) return;
 
             if (useSimulatedTime)
@@ -501,17 +503,17 @@ namespace ROS2
 
         public void UndeclareParameter(string name) => _parameterHandler.UndeclareParameter(name);
 
-        public List<ParameterMsg> GetParameters(IEnumerable<string> names) => _parameterHandler.GetParameters(names);
+        public List<Parameter> GetParameters(IEnumerable<string> names) => _parameterHandler.GetParameters(names);
 
-        public ParameterMsg GetParameter(string name) => _parameterHandler.GetParameter(name);
+        public Parameter GetParameter(string name) => _parameterHandler.GetParameter(name);
 
-        public List<SetParametersResult> SetParameters(List<ParameterMsg> parameters) =>
+        public List<SetParametersResult> SetParameters(List<Parameter> parameters) =>
             _parameterHandler.SetParameters(parameters);
 
-        public SetParametersResult SetParametersAtomically(List<ParameterMsg> parameters) =>
+        public SetParametersResult SetParametersAtomically(List<Parameter> parameters) =>
             _parameterHandler.SetParametersAtomically(parameters);
 
-        public SetParametersResult SetParameter(ParameterMsg parameter) => _parameterHandler.SetParameter(parameter);
+        public SetParametersResult SetParameter(Parameter parameter) => _parameterHandler.SetParameter(parameter);
 
         public bool HasParameter(string name) => _parameterHandler.HasParameter(name);
 
@@ -520,7 +522,7 @@ namespace ROS2
         /// </summary>
         /// <param name="callback">The action to be invoked parameters are set successfully</param>
         /// <returns>An <see cref="IDisposable"/> that should be disposed to stop listening for changes.</returns>
-        public IDisposable AddPostSetParameterCallback(Action<List<ParameterMsg>> callback) =>
+        public IDisposable AddPostSetParameterCallback(Action<List<Parameter>> callback) =>
             _parameterHandler.AddPostSetParameterCallback(callback);
 
         #endregion

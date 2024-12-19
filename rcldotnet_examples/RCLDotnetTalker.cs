@@ -24,7 +24,7 @@ namespace ConsoleApplication
 
         private void PublishChatter(TimeSpan elapsed)
         {
-            _msg.Data = $"{_node.GetParameter("publish_string_prefix").Value.StringValue}: {_i}";
+            _msg.Data = $"{_node.GetParameter("publish_string_prefix").GetString()}: {_i}";
             Console.WriteLine($"Publishing: \"{_msg.Data}\"");
             _chatterPub.Publish(_msg);
 

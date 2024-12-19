@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using rcl_interfaces.msg;
 using rcl_interfaces.srv;
@@ -46,7 +47,7 @@ namespace ROS2
 
         private readonly Publisher<ParameterEvent> _publisherEvent;
 
-        private Action<List<ParameterMsg>> _postSetParameterCallbacks;
+        private Action<List<Parameter>> _postSetParameterCallbacks;
 
         internal ParameterHandler(Node node)
         {
@@ -128,14 +129,14 @@ namespace ROS2
 
         #endregion
 
-        public IDisposable AddPostSetParameterCallback(Action<List<ParameterMsg>> callback)
+        public IDisposable AddPostSetParameterCallback(Action<List<Parameter>> callback)
         {
             var disposable = new PostSetParameterDisposable(this, callback);
             _postSetParameterCallbacks += callback;
             return disposable;
         }
 
-        internal void RemovePostSetParameterCallback(Action<List<ParameterMsg>> callback)
+        internal void RemovePostSetParameterCallback(Action<List<Parameter>> callback)
         {
             _postSetParameterCallbacks -= callback;
         }
@@ -219,15 +220,19 @@ namespace ROS2
             ParameterMsg declaredParameter = new ParameterMsg { Name = name, Value = declaredValue };
             if (!TryGetParameterOverride(name, ref declaredValue))
             {
+                // The callback assures the provided value is copied to avoid
+                // mutation of the internal parameter values via mutable
+                // objects.
                 assignDefaultCallback?.Invoke(declaredParameter.Value);
             }
 
             _parameters.Add(name, declaredParameter);
             _descriptors.Add(name, descriptor);
 
-            var declaredParameters = new List<ParameterMsg> { declaredParameter };
-            PublishParametersDeclaredEvent(declaredParameters);
-            _postSetParameterCallbacks?.Invoke(declaredParameters);
+            PublishParametersDeclaredEvent(new List<ParameterMsg> { declaredParameter });
+
+            List<Parameter> parameterObjects = new List<Parameter> { Parameter.CreateFromMessage(declaredParameter) };
+            _postSetParameterCallbacks?.Invoke(parameterObjects);
         }
 
         public void DeclareParameter(string name, bool defaultValue = false, ParameterDescriptor descriptor = null)
@@ -311,84 +316,67 @@ namespace ROS2
             PublishParametersDeletedEvent(new List<ParameterMsg> { parameter });
         }
 
-        private ParameterMsg CloneParameter(ParameterMsg toClone)
-        {
-            ParameterMsg clone = new ParameterMsg
-            {
-                Name = toClone.Name,
-                Value = CloneParameterValue(toClone.Value)
-            };
-
-            return clone;
-        }
-
-        private ParameterValue CloneParameterValue(ParameterValue toClone)
-        {
-            byte type = toClone.Type;
-            ParameterValue clone = new ParameterValue
-            {
-                Type = type
-            };
-
-            switch (type)
-            {
-                case ParameterTypeMsg.PARAMETER_BOOL:
-                    clone.BoolValue = toClone.BoolValue;
-                    break;
-                case ParameterTypeMsg.PARAMETER_INTEGER:
-                    clone.IntegerValue = toClone.IntegerValue;
-                    break;
-                case ParameterTypeMsg.PARAMETER_DOUBLE:
-                    clone.DoubleValue = toClone.DoubleValue;
-                    break;
-                case ParameterTypeMsg.PARAMETER_STRING:
-                    clone.StringValue = toClone.StringValue;
-                    break;
-                case ParameterTypeMsg.PARAMETER_BYTE_ARRAY:
-                    clone.ByteArrayValue.AddRange(toClone.ByteArrayValue);
-                    break;
-                case ParameterTypeMsg.PARAMETER_BOOL_ARRAY:
-                    clone.BoolArrayValue.AddRange(toClone.BoolArrayValue);
-                    break;
-                case ParameterTypeMsg.PARAMETER_INTEGER_ARRAY:
-                    clone.IntegerArrayValue.AddRange(toClone.IntegerArrayValue);
-                    break;
-                case ParameterTypeMsg.PARAMETER_DOUBLE_ARRAY:
-                    clone.DoubleArrayValue.AddRange(toClone.DoubleArrayValue);
-                    break;
-                case ParameterTypeMsg.PARAMETER_STRING_ARRAY:
-                    clone.StringArrayValue.AddRange(toClone.StringArrayValue);
-                    break;
-                default:
-                    throw new InvalidParameterTypeException(type);
-            }
-
-            return clone;
-        }
-
-        public ParameterMsg GetParameter(string name)
+        public Parameter GetParameter(string name)
         {
             if (_parameters.TryGetValue(name, out ParameterMsg parameter))
             {
-                return CloneParameter(parameter);
+                // Do a deep copy the parameter here to avoid mutation of the
+                // internal parameter values by the caller.
+                return Parameter.CreateFromMessageDeepCopy(parameter);
             }
 
             throw new ParameterNotDeclaredException(name);
         }
 
-        public List<ParameterMsg> GetParameters(IEnumerable<string> names)
+        public List<Parameter> GetParameters(IEnumerable<string> names)
         {
-            List<ParameterMsg> results = new List<ParameterMsg>();
+            List<Parameter> results = new List<Parameter>();
 
             foreach (string parameterName in names)
             {
                 if (_parameters.TryGetValue(parameterName, out ParameterMsg parameter))
                 {
-                    results.Add(CloneParameter(parameter));
+                    // Do a deep copy the parameter here to avoid mutation of the
+                    // internal parameter values by the caller.
+                    results.Add(Parameter.CreateFromMessageDeepCopy(parameter));
                 }
             }
 
             return results;
+        }
+
+        public SetParametersResult SetParameter(Parameter parameter)
+        {
+            // Do a deep copy the parameter here to avoid mutation of the
+            // internal parameter values by the caller.
+            var convertedParameters = new List<ParameterMsg> { parameter.ToMessageDeepCopy() };
+            return SetParametersAtomically(convertedParameters);
+        }
+
+        public List<SetParametersResult> SetParameters(List<Parameter> parameters)
+        {
+            List<SetParametersResult> results = new List<SetParametersResult>();
+
+            foreach (Parameter source in parameters)
+            {
+                // Do a deep copy the parameter here to avoid mutation of the
+                // internal parameter values by the caller.
+                var convertedParameters = new List<ParameterMsg> { source.ToMessageDeepCopy() };
+                results.Add(SetParametersAtomically(convertedParameters));
+            }
+
+            return results;
+        }
+
+        public SetParametersResult SetParametersAtomically(List<Parameter> parameters)
+        {
+            // Do a deep copy the parameter here to avoid mutation of the
+            // internal parameter values by the caller.
+            var convertedParameters = parameters
+                .Select(parameter => parameter.ToMessageDeepCopy())
+                .ToList();
+
+            return SetParametersAtomically(convertedParameters);
         }
 
         private SetParametersResult CheckParameterCompatibility(ParameterMsg update)
@@ -422,6 +410,7 @@ namespace ROS2
         {
             ParameterMsg target = _parameters[source.Name];
 
+            // The lists are already deep copied in the public methods.
             switch (source.Value.Type)
             {
                 case ParameterTypeMsg.PARAMETER_BOOL:
@@ -456,12 +445,7 @@ namespace ROS2
             }
         }
 
-        public SetParametersResult SetParameter(ParameterMsg parameter)
-        {
-            return SetParametersAtomically(new List<ParameterMsg> { parameter });
-        }
-
-        public List<SetParametersResult> SetParameters(List<ParameterMsg> parameters)
+        private List<SetParametersResult> SetParameters(List<ParameterMsg> parameters)
         {
             List<SetParametersResult> results = new List<SetParametersResult>();
 
@@ -473,7 +457,7 @@ namespace ROS2
             return results;
         }
 
-        public SetParametersResult SetParametersAtomically(List<ParameterMsg> parameters)
+        private SetParametersResult SetParametersAtomically(List<ParameterMsg> parameters)
         {
             SetParametersResult result = new SetParametersResult();
 
@@ -491,7 +475,14 @@ namespace ROS2
             }
 
             PublishParametersChangedEvent(parameters);
-            _postSetParameterCallbacks?.Invoke(parameters);
+
+            // Do a deep copy the parameters here to avoid mutation of the
+            // internal values by the callback.
+            List<Parameter> parameterObjects = parameters
+                .Select(message => Parameter.CreateFromMessageDeepCopy(message))
+                .ToList();
+
+            _postSetParameterCallbacks?.Invoke(parameterObjects);
 
             return result;
         }
@@ -500,10 +491,10 @@ namespace ROS2
 
         private class PostSetParameterDisposable : IDisposable
         {
-            private readonly Action<List<ParameterMsg>> _callback;
+            private readonly Action<List<Parameter>> _callback;
             private readonly ParameterHandler _handler;
 
-            public PostSetParameterDisposable(ParameterHandler handler, Action<List<ParameterMsg>> callback)
+            public PostSetParameterDisposable(ParameterHandler handler, Action<List<Parameter>> callback)
             {
                 _handler = handler;
                 _callback = callback;

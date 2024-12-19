@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using rcl_interfaces.msg;
 using ROS2.ParameterHandling.Exceptions;
 using ParameterTypeMsg = rcl_interfaces.msg.ParameterType;
@@ -151,6 +152,33 @@ namespace ROS2
             }
         }
 
+        internal static Parameter CreateFromMessageDeepCopy(ParameterMsg msg)
+        {
+            switch (msg.Value.Type)
+            {
+                case ParameterTypeMsg.PARAMETER_BOOL:
+                    return new Parameter(msg.Name, ParameterType.Bool, msg.Value.BoolValue);
+                case ParameterTypeMsg.PARAMETER_INTEGER:
+                    return new Parameter(msg.Name, ParameterType.Integer, msg.Value.IntegerValue);
+                case ParameterTypeMsg.PARAMETER_DOUBLE:
+                    return new Parameter(msg.Name, ParameterType.Double, msg.Value.DoubleValue);
+                case ParameterTypeMsg.PARAMETER_STRING:
+                    return new Parameter(msg.Name, ParameterType.String, msg.Value.StringValue);
+                case ParameterTypeMsg.PARAMETER_BYTE_ARRAY:
+                    return new Parameter(msg.Name, ParameterType.ByteArray, msg.Value.ByteArrayValue.ToList());
+                case ParameterTypeMsg.PARAMETER_BOOL_ARRAY:
+                    return new Parameter(msg.Name, ParameterType.BoolArray, msg.Value.BoolArrayValue.ToList());
+                case ParameterTypeMsg.PARAMETER_INTEGER_ARRAY:
+                    return new Parameter(msg.Name, ParameterType.IntegerArray, msg.Value.IntegerArrayValue.ToList());
+                case ParameterTypeMsg.PARAMETER_DOUBLE_ARRAY:
+                    return new Parameter(msg.Name, ParameterType.DoubleArray, msg.Value.DoubleArrayValue.ToList());
+                case ParameterTypeMsg.PARAMETER_STRING_ARRAY:
+                    return new Parameter(msg.Name, ParameterType.StringArray, msg.Value.StringArrayValue.ToList());
+                default:
+                    throw new InvalidParameterTypeException(msg.Value.Type);
+            }
+        }
+
         public T Get<T>()
         {
             if (_value is T value)
@@ -238,6 +266,53 @@ namespace ROS2
                     break;
                 case ParameterType.StringArray:
                     msg.Value.StringArrayValue = (List<string>)_value;
+                    break;
+                default:
+                    // Can't happen as no other types are passed to the private constructor.
+                    throw new InvalidParameterTypeException((byte)Type);
+            }
+
+            return msg;
+        }
+
+        internal ParameterMsg ToMessageDeepCopy()
+        {
+            ParameterMsg msg = new ParameterMsg
+            {
+                Name = Name,
+                Value = new ParameterValue { Type = (byte)Type }
+            };
+
+            switch (Type)
+            {
+                case ParameterType.NotSet:
+                    break;
+                case ParameterType.Bool:
+                    msg.Value.BoolValue = (bool)_value;
+                    break;
+                case ParameterType.Integer:
+                    msg.Value.IntegerValue = (long)_value;
+                    break;
+                case ParameterType.Double:
+                    msg.Value.DoubleValue = (double)_value;
+                    break;
+                case ParameterType.String:
+                    msg.Value.StringValue = (string)_value;
+                    break;
+                case ParameterType.ByteArray:
+                    msg.Value.ByteArrayValue.AddRange((List<byte>)_value);
+                    break;
+                case ParameterType.BoolArray:
+                    msg.Value.BoolArrayValue.AddRange((List<bool>)_value);
+                    break;
+                case ParameterType.IntegerArray:
+                    msg.Value.IntegerArrayValue.AddRange((List<long>)_value);
+                    break;
+                case ParameterType.DoubleArray:
+                    msg.Value.DoubleArrayValue.AddRange((List<double>)_value);
+                    break;
+                case ParameterType.StringArray:
+                    msg.Value.StringArrayValue.AddRange((List<string>)_value);
                     break;
                 default:
                     // Can't happen as no other types are passed to the private constructor.
