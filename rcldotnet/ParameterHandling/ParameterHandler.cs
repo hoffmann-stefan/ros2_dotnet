@@ -100,6 +100,12 @@ namespace ROS2
                 {
                     response.Values.Add(parameter.Value);
                 }
+                else
+                {
+                    // return an empty list if one parameter is not declared.
+                    response.Values.Clear();
+                    return;
+                }
             }
         }
 
