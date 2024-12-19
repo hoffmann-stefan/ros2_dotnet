@@ -77,9 +77,18 @@ namespace ROS2
 
         private void OnGetParameterTypesServiceRequest(GetParameterTypes_Request request, GetParameterTypes_Response response)
         {
-            foreach (ParameterMsg parameter in _parameters.Values)
+            foreach (string name in request.Names)
             {
-                response.Types.Add(parameter.Value.Type);
+                if (_parameters.TryGetValue(name, out ParameterMsg parameter))
+                {
+                    response.Types.Add(parameter.Value.Type);
+                }
+                else
+                {
+                    // return an empty list if one parameter is not declared.
+                    response.Types.Clear();
+                    return;
+                }
             }
         }
 
