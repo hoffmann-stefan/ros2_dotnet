@@ -20,6 +20,8 @@ using rcl_interfaces.msg;
 using rcl_interfaces.srv;
 using ROS2.ParameterHandling;
 using ROS2.ParameterHandling.Exceptions;
+using ParameterTypeMsg = rcl_interfaces.msg.ParameterType;
+using ParameterMsg = rcl_interfaces.msg.Parameter;
 
 namespace ROS2
 {
@@ -27,24 +29,24 @@ namespace ROS2
     {
         private static readonly IDictionary<Type, byte> _typeToParameterType = new Dictionary<Type, byte>
         {
-            {typeof(bool), ParameterType.PARAMETER_BOOL},
-            {typeof(long), ParameterType.PARAMETER_INTEGER},
-            {typeof(double), ParameterType.PARAMETER_DOUBLE},
-            {typeof(string), ParameterType.PARAMETER_STRING},
-            {typeof(List<byte>), ParameterType.PARAMETER_BYTE_ARRAY},
-            {typeof(List<bool>), ParameterType.PARAMETER_BOOL_ARRAY},
-            {typeof(List<long>), ParameterType.PARAMETER_INTEGER_ARRAY},
-            {typeof(List<double>), ParameterType.PARAMETER_DOUBLE_ARRAY},
-            {typeof(List<string>), ParameterType.PARAMETER_STRING_ARRAY}
+            {typeof(bool), ParameterTypeMsg.PARAMETER_BOOL},
+            {typeof(long), ParameterTypeMsg.PARAMETER_INTEGER},
+            {typeof(double), ParameterTypeMsg.PARAMETER_DOUBLE},
+            {typeof(string), ParameterTypeMsg.PARAMETER_STRING},
+            {typeof(List<byte>), ParameterTypeMsg.PARAMETER_BYTE_ARRAY},
+            {typeof(List<bool>), ParameterTypeMsg.PARAMETER_BOOL_ARRAY},
+            {typeof(List<long>), ParameterTypeMsg.PARAMETER_INTEGER_ARRAY},
+            {typeof(List<double>), ParameterTypeMsg.PARAMETER_DOUBLE_ARRAY},
+            {typeof(List<string>), ParameterTypeMsg.PARAMETER_STRING_ARRAY}
         };
 
         private readonly Node _node;
-        private readonly IDictionary<string, Parameter> _parameters = new Dictionary<string, Parameter>();
+        private readonly IDictionary<string, ParameterMsg> _parameters = new Dictionary<string, ParameterMsg>();
         private readonly IDictionary<string, ParameterDescriptor> _descriptors = new Dictionary<string, ParameterDescriptor>();
 
         private readonly Publisher<ParameterEvent> _publisherEvent;
 
-        private Action<List<Parameter>> _postSetParameterCallbacks;
+        private Action<List<ParameterMsg>> _postSetParameterCallbacks;
 
         internal ParameterHandler(Node node)
         {
@@ -74,7 +76,7 @@ namespace ROS2
 
         private void OnGetParameterTypesServiceRequest(GetParameterTypes_Request request, GetParameterTypes_Response response)
         {
-            foreach (Parameter parameter in _parameters.Values)
+            foreach (ParameterMsg parameter in _parameters.Values)
             {
                 response.Types.Add(parameter.Value.Type);
             }
@@ -84,7 +86,7 @@ namespace ROS2
         {
             foreach (string parameterName in request.Names)
             {
-                if (_parameters.TryGetValue(parameterName, out Parameter parameter))
+                if (_parameters.TryGetValue(parameterName, out ParameterMsg parameter))
                 {
                     response.Values.Add(parameter.Value);
                 }
@@ -94,7 +96,7 @@ namespace ROS2
         private void OnListParametersServiceRequest(ListParameters_Request request, ListParameters_Response response)
         {
             bool hasPrefixes = request.Prefixes.Count != 0;
-            foreach (Parameter parameter in _parameters.Values)
+            foreach (ParameterMsg parameter in _parameters.Values)
             {
                 bool matchesCriteria = !hasPrefixes;
 
@@ -126,14 +128,14 @@ namespace ROS2
 
         #endregion
 
-        public IDisposable AddPostSetParameterCallback(Action<List<Parameter>> callback)
+        public IDisposable AddPostSetParameterCallback(Action<List<ParameterMsg>> callback)
         {
             var disposable = new PostSetParameterDisposable(this, callback);
             _postSetParameterCallbacks += callback;
             return disposable;
         }
 
-        internal void RemovePostSetParameterCallback(Action<List<Parameter>> callback)
+        internal void RemovePostSetParameterCallback(Action<List<ParameterMsg>> callback)
         {
             _postSetParameterCallbacks -= callback;
         }
@@ -147,21 +149,21 @@ namespace ROS2
             };
         }
 
-        private void PublishParametersDeclaredEvent(List<Parameter> parameters)
+        private void PublishParametersDeclaredEvent(List<ParameterMsg> parameters)
         {
             ParameterEvent parameterEvent = GenerateParameterEventMessage();
             parameterEvent.NewParameters.AddRange(parameters);
             _publisherEvent.Publish(parameterEvent);
         }
 
-        private void PublishParametersChangedEvent(IEnumerable<Parameter> parameters)
+        private void PublishParametersChangedEvent(IEnumerable<ParameterMsg> parameters)
         {
             ParameterEvent parameterEvent = GenerateParameterEventMessage();
             parameterEvent.ChangedParameters.AddRange(parameters);
             _publisherEvent.Publish(parameterEvent);
         }
 
-        private void PublishParametersDeletedEvent(IEnumerable<Parameter> parameters)
+        private void PublishParametersDeletedEvent(IEnumerable<ParameterMsg> parameters)
         {
             ParameterEvent parameterEvent = GenerateParameterEventMessage();
             parameterEvent.DeletedParameters.AddRange(parameters);
@@ -200,7 +202,7 @@ namespace ROS2
                 };
             }
 
-            if (_parameters.TryGetValue(name, out Parameter parameter))
+            if (_parameters.TryGetValue(name, out ParameterMsg parameter))
             {
 
                 if (parameter.Value.Type != typeCode)
@@ -214,7 +216,7 @@ namespace ROS2
             }
 
             ParameterValue declaredValue = new ParameterValue { Type = typeCode };
-            Parameter declaredParameter = new Parameter { Name = name, Value = declaredValue };
+            ParameterMsg declaredParameter = new ParameterMsg { Name = name, Value = declaredValue };
             if (!TryGetParameterOverride(name, ref declaredValue))
             {
                 assignDefaultCallback?.Invoke(declaredParameter.Value);
@@ -223,7 +225,7 @@ namespace ROS2
             _parameters.Add(name, declaredParameter);
             _descriptors.Add(name, descriptor);
 
-            var declaredParameters = new List<Parameter> { declaredParameter };
+            var declaredParameters = new List<ParameterMsg> { declaredParameter };
             PublishParametersDeclaredEvent(declaredParameters);
             _postSetParameterCallbacks?.Invoke(declaredParameters);
         }
@@ -301,17 +303,17 @@ namespace ROS2
 
             if (descriptor.ReadOnly) throw new ParameterImmutableException(name);
 
-            Parameter parameter = _parameters[name];
+            ParameterMsg parameter = _parameters[name];
 
             _parameters.Remove(name);
             _descriptors.Remove(name);
 
-            PublishParametersDeletedEvent(new List<Parameter> { parameter });
+            PublishParametersDeletedEvent(new List<ParameterMsg> { parameter });
         }
 
-        private Parameter CloneParameter(Parameter toClone)
+        private ParameterMsg CloneParameter(ParameterMsg toClone)
         {
-            Parameter clone = new Parameter
+            ParameterMsg clone = new ParameterMsg
             {
                 Name = toClone.Name,
                 Value = CloneParameterValue(toClone.Value)
@@ -330,31 +332,31 @@ namespace ROS2
 
             switch (type)
             {
-                case ParameterType.PARAMETER_BOOL:
+                case ParameterTypeMsg.PARAMETER_BOOL:
                     clone.BoolValue = toClone.BoolValue;
                     break;
-                case ParameterType.PARAMETER_INTEGER:
+                case ParameterTypeMsg.PARAMETER_INTEGER:
                     clone.IntegerValue = toClone.IntegerValue;
                     break;
-                case ParameterType.PARAMETER_DOUBLE:
+                case ParameterTypeMsg.PARAMETER_DOUBLE:
                     clone.DoubleValue = toClone.DoubleValue;
                     break;
-                case ParameterType.PARAMETER_STRING:
+                case ParameterTypeMsg.PARAMETER_STRING:
                     clone.StringValue = toClone.StringValue;
                     break;
-                case ParameterType.PARAMETER_BYTE_ARRAY:
+                case ParameterTypeMsg.PARAMETER_BYTE_ARRAY:
                     clone.ByteArrayValue.AddRange(toClone.ByteArrayValue);
                     break;
-                case ParameterType.PARAMETER_BOOL_ARRAY:
+                case ParameterTypeMsg.PARAMETER_BOOL_ARRAY:
                     clone.BoolArrayValue.AddRange(toClone.BoolArrayValue);
                     break;
-                case ParameterType.PARAMETER_INTEGER_ARRAY:
+                case ParameterTypeMsg.PARAMETER_INTEGER_ARRAY:
                     clone.IntegerArrayValue.AddRange(toClone.IntegerArrayValue);
                     break;
-                case ParameterType.PARAMETER_DOUBLE_ARRAY:
+                case ParameterTypeMsg.PARAMETER_DOUBLE_ARRAY:
                     clone.DoubleArrayValue.AddRange(toClone.DoubleArrayValue);
                     break;
-                case ParameterType.PARAMETER_STRING_ARRAY:
+                case ParameterTypeMsg.PARAMETER_STRING_ARRAY:
                     clone.StringArrayValue.AddRange(toClone.StringArrayValue);
                     break;
                 default:
@@ -364,9 +366,9 @@ namespace ROS2
             return clone;
         }
 
-        public Parameter GetParameter(string name)
+        public ParameterMsg GetParameter(string name)
         {
-            if (_parameters.TryGetValue(name, out Parameter parameter))
+            if (_parameters.TryGetValue(name, out ParameterMsg parameter))
             {
                 return CloneParameter(parameter);
             }
@@ -374,13 +376,13 @@ namespace ROS2
             throw new ParameterNotDeclaredException(name);
         }
 
-        public List<Parameter> GetParameters(IEnumerable<string> names)
+        public List<ParameterMsg> GetParameters(IEnumerable<string> names)
         {
-            List<Parameter> results = new List<Parameter>();
+            List<ParameterMsg> results = new List<ParameterMsg>();
 
             foreach (string parameterName in names)
             {
-                if (_parameters.TryGetValue(parameterName, out Parameter parameter))
+                if (_parameters.TryGetValue(parameterName, out ParameterMsg parameter))
                 {
                     results.Add(CloneParameter(parameter));
                 }
@@ -389,7 +391,7 @@ namespace ROS2
             return results;
         }
 
-        private SetParametersResult CheckParameterCompatibility(Parameter update)
+        private SetParametersResult CheckParameterCompatibility(ParameterMsg update)
         {
             SetParametersResult result = new SetParametersResult();
             if (!_descriptors.TryGetValue(update.Name, out ParameterDescriptor descriptor))
@@ -416,37 +418,37 @@ namespace ROS2
             return result;
         }
 
-        private void UpdateParameter(Parameter source)
+        private void UpdateParameter(ParameterMsg source)
         {
-            Parameter target = _parameters[source.Name];
+            ParameterMsg target = _parameters[source.Name];
 
             switch (source.Value.Type)
             {
-                case ParameterType.PARAMETER_BOOL:
+                case ParameterTypeMsg.PARAMETER_BOOL:
                     target.Value.BoolValue = source.Value.BoolValue;
                     break;
-                case ParameterType.PARAMETER_INTEGER:
+                case ParameterTypeMsg.PARAMETER_INTEGER:
                     target.Value.IntegerValue = source.Value.IntegerValue;
                     break;
-                case ParameterType.PARAMETER_DOUBLE:
+                case ParameterTypeMsg.PARAMETER_DOUBLE:
                     target.Value.DoubleValue = source.Value.DoubleValue;
                     break;
-                case ParameterType.PARAMETER_STRING:
+                case ParameterTypeMsg.PARAMETER_STRING:
                     target.Value.StringValue = source.Value.StringValue;
                     break;
-                case ParameterType.PARAMETER_BYTE_ARRAY:
+                case ParameterTypeMsg.PARAMETER_BYTE_ARRAY:
                     target.Value.ByteArrayValue = source.Value.ByteArrayValue;
                     break;
-                case ParameterType.PARAMETER_BOOL_ARRAY:
+                case ParameterTypeMsg.PARAMETER_BOOL_ARRAY:
                     target.Value.BoolArrayValue = source.Value.BoolArrayValue;
                     break;
-                case ParameterType.PARAMETER_INTEGER_ARRAY:
+                case ParameterTypeMsg.PARAMETER_INTEGER_ARRAY:
                     target.Value.IntegerArrayValue = source.Value.IntegerArrayValue;
                     break;
-                case ParameterType.PARAMETER_DOUBLE_ARRAY:
+                case ParameterTypeMsg.PARAMETER_DOUBLE_ARRAY:
                     target.Value.DoubleArrayValue = source.Value.DoubleArrayValue;
                     break;
-                case ParameterType.PARAMETER_STRING_ARRAY:
+                case ParameterTypeMsg.PARAMETER_STRING_ARRAY:
                     target.Value.StringArrayValue = source.Value.StringArrayValue;
                     break;
                 default:
@@ -454,28 +456,28 @@ namespace ROS2
             }
         }
 
-        public SetParametersResult SetParameter(Parameter parameter)
+        public SetParametersResult SetParameter(ParameterMsg parameter)
         {
-            return SetParametersAtomically(new List<Parameter> { parameter });
+            return SetParametersAtomically(new List<ParameterMsg> { parameter });
         }
 
-        public List<SetParametersResult> SetParameters(List<Parameter> parameters)
+        public List<SetParametersResult> SetParameters(List<ParameterMsg> parameters)
         {
             List<SetParametersResult> results = new List<SetParametersResult>();
 
-            foreach (Parameter source in parameters)
+            foreach (ParameterMsg source in parameters)
             {
-                results.Add(SetParametersAtomically(new List<Parameter> { source }));
+                results.Add(SetParametersAtomically(new List<ParameterMsg> { source }));
             }
 
             return results;
         }
 
-        public SetParametersResult SetParametersAtomically(List<Parameter> parameters)
+        public SetParametersResult SetParametersAtomically(List<ParameterMsg> parameters)
         {
             SetParametersResult result = new SetParametersResult();
 
-            foreach (Parameter source in parameters)
+            foreach (ParameterMsg source in parameters)
             {
                 result = CheckParameterCompatibility(source);
                 if (!result.Successful) break;
@@ -483,7 +485,7 @@ namespace ROS2
 
             if (!result.Successful) return result;
 
-            foreach (Parameter source in parameters)
+            foreach (ParameterMsg source in parameters)
             {
                 UpdateParameter(source);
             }
@@ -498,10 +500,10 @@ namespace ROS2
 
         private class PostSetParameterDisposable : IDisposable
         {
-            private readonly Action<List<Parameter>> _callback;
+            private readonly Action<List<ParameterMsg>> _callback;
             private readonly ParameterHandler _handler;
 
-            public PostSetParameterDisposable(ParameterHandler handler, Action<List<Parameter>> callback)
+            public PostSetParameterDisposable(ParameterHandler handler, Action<List<ParameterMsg>> callback)
             {
                 _handler = handler;
                 _callback = callback;
