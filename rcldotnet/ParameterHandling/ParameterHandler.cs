@@ -343,6 +343,10 @@ namespace ROS2
                     // internal parameter values by the caller.
                     results.Add(Parameter.CreateFromMessageDeepCopy(parameter));
                 }
+                else
+                {
+                    throw new ParameterNotDeclaredException(parameterName);
+                }
             }
 
             return results;
