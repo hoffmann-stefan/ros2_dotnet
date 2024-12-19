@@ -136,13 +136,41 @@ namespace ROS2
         {
             foreach (ParameterMsg source in request.Parameters)
             {
-                response.Results.Add(SetParametersAtomically(new List<ParameterMsg> { source }));
+                SetParametersResult result;
+                try
+                {
+                    result = SetParametersAtomically(new List<ParameterMsg> { source });
+                }
+                catch (ParameterException ex)
+                {
+                    result = new SetParametersResult
+                    {
+                        Successful = false,
+                        Reason = ex.Message
+                    };
+                }
+
+                response.Results.Add(result);
             }
         }
 
         private void OnSetParametersAtomicallyServiceRequest(SetParametersAtomically_Request request, SetParametersAtomically_Response response)
         {
-            response.Result = SetParametersAtomically(request.Parameters);
+            SetParametersResult result;
+            try
+            {
+                result = SetParametersAtomically(request.Parameters);
+            }
+            catch (ParameterException ex)
+            {
+                result = new SetParametersResult
+                {
+                    Successful = false,
+                    Reason = ex.Message
+                };
+            }
+
+            response.Result = result;
         }
 
         #endregion
@@ -406,8 +434,7 @@ namespace ROS2
             SetParametersResult result = new SetParametersResult();
             if (!_descriptors.TryGetValue(update.Name, out ParameterDescriptor descriptor))
             {
-                result.Successful = false;
-                result.Reason = "Parameter was not declared!";
+                throw new ParameterNotDeclaredException(update.Name);
             }
             else if (descriptor.ReadOnly)
             {
