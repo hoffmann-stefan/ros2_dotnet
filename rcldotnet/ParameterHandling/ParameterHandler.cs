@@ -68,10 +68,16 @@ namespace ROS2
         {
             foreach (string name in request.Names)
             {
-                response.Descriptors.Add(
-                    _descriptors.TryGetValue(name, out ParameterDescriptor descriptor)
-                        ? descriptor
-                        : new ParameterDescriptor());
+                if (_descriptors.TryGetValue(name, out ParameterDescriptor descriptor))
+                {
+                    response.Descriptors.Add(descriptor);
+                }
+                else
+                {
+                    // return an empty list if one parameter is not declared.
+                    response.Descriptors.Clear();
+                    return;
+                }
             }
         }
 
@@ -269,6 +275,7 @@ namespace ROS2
                 assignDefaultCallback?.Invoke(declaredParameter.Value);
             }
 
+            // TODO: ensure returned descriptor names and types are set correctly.
             _parameters.Add(name, declaredParameter);
             _descriptors.Add(name, descriptor);
 
