@@ -111,24 +111,21 @@ namespace ROS2
 
         private void OnListParametersServiceRequest(ListParameters_Request request, ListParameters_Response response)
         {
-            bool hasPrefixes = request.Prefixes.Count != 0;
-            foreach (ParameterMsg parameter in _parameters.Values)
+            try
             {
-                bool matchesCriteria = !hasPrefixes;
-
-                if (hasPrefixes)
+                if (request.Depth >= 0 && request.Depth <= int.MaxValue)
                 {
-                    foreach (string prefix in request.Prefixes)
-                    {
-                        if (parameter.Name.StartsWith(prefix))
-                        {
-                            matchesCriteria = true;
-                            break;
-                        }
-                    }
+                    response.Result = ListParameters(request.Prefixes, (int)request.Depth);
                 }
-
-                if (matchesCriteria) response.Result.Names.Add(parameter.Name);
+                else
+                {
+                    // return an empty list if the depth is too large.
+                }
+            }
+            catch (Exception)
+            {
+                response.Result.Names.Clear();
+                response.Result.Prefixes.Clear();
             }
         }
 
