@@ -526,6 +526,69 @@ namespace ROS2
 
         public bool HasParameter(string name) => _parameters.ContainsKey(name);
 
+        public ListParametersResult ListParameters(List<string> prefixes, int depth)
+        {
+            if (depth < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(depth), "Depth must be greater than or equal to 0.");
+            }
+
+            const char Separator = '.';
+            bool SeparatorsLessThanDepth(string str) => str.Count(c => c == Separator) < depth;
+
+            bool recursive = (prefixes.Count == 0) && (ulong)depth == ListParameters_Request.DEPTH_RECURSIVE;
+
+            var result = new ListParametersResult();
+            foreach (var kv in _parameters)
+            {
+                if (!recursive)
+                {
+                    bool getAll = (prefixes.Count == 0) && SeparatorsLessThanDepth(kv.Key);
+                    if (!getAll)
+                    {
+                        bool prefixMatches = prefixes.Any(prefix =>
+                        {
+                            if (kv.Key == prefix)
+                            {
+                                return true;
+                            }
+
+                            if (kv.Key.StartsWith(prefix + Separator))
+                            {
+                                if ((ulong)depth == ListParameters_Request.DEPTH_RECURSIVE)
+                                {
+                                    return true;
+                                }
+
+                                var substr = kv.Key.Substring(prefix.Length + 1);
+                                return SeparatorsLessThanDepth(substr);
+                            }
+
+                            return false;
+                        });
+
+                        if (!prefixMatches)
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                result.Names.Add(kv.Key);
+                var lastSeparator = kv.Key.LastIndexOf(Separator);
+                if (lastSeparator != -1)
+                {
+                    var prefix = kv.Key.Substring(0, lastSeparator);
+                    if (!result.Prefixes.Contains(prefix))
+                    {
+                        result.Prefixes.Add(prefix);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private class PostSetParameterDisposable : IDisposable
         {
             private readonly Action<List<Parameter>> _callback;

@@ -517,6 +517,9 @@ namespace ROS2
 
         public bool HasParameter(string name) => _parameterHandler.HasParameter(name);
 
+        public ListParametersResult ListParameters(List<string> prefixes, int depth) =>
+            _parameterHandler.ListParameters(prefixes, depth);
+
         /// <summary>
         /// Add a callback that gets triggered after parameters are set successfully.
         /// </summary>
