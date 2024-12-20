@@ -144,7 +144,7 @@ namespace ROS2
                 {
                     result = SetParametersAtomically(new List<ParameterMsg> { source });
                 }
-                catch (ParameterException ex)
+                catch (Exception ex)
                 {
                     result = new SetParametersResult
                     {
@@ -164,7 +164,7 @@ namespace ROS2
             {
                 result = SetParametersAtomically(request.Parameters);
             }
-            catch (ParameterException ex)
+            catch (Exception ex)
             {
                 result = new SetParametersResult
                 {
