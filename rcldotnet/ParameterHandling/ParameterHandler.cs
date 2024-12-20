@@ -363,6 +363,8 @@ namespace ROS2
             _parameters.Remove(name);
             _descriptors.Remove(name);
 
+            // TODO: Check again in rclcpp and rclpy if undeclaring a parameter
+            // should send an event.
             PublishParametersDeletedEvent(new List<ParameterMsg> { parameter });
         }
 
