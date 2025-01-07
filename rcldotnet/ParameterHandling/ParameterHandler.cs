@@ -285,7 +285,7 @@ namespace ROS2
             var postSetParameterCallbacks = _postSetParameterCallbacks;
             if (postSetParameterCallbacks != null)
             {
-                List<Parameter> parameterObjects = new List<Parameter> { Parameter.CreateFromMessage(declaredParameter) };
+                List<Parameter> parameterObjects = new List<Parameter> { Parameter.CreateFromMessageDeepCopy(declaredParameter) };
                 postSetParameterCallbacks.Invoke(parameterObjects);
             }
         }
