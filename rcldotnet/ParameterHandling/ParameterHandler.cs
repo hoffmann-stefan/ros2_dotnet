@@ -252,17 +252,12 @@ namespace ROS2
                 };
             }
 
+            // This check doesn't happen atomically, but so is it in rclcpp and
+            // rclpy as far as I can see as well. Maybe check if this should be
+            // changed (upstream as well).
             if (_parameters.TryGetValue(name, out ParameterMsg parameter))
             {
-
-                if (parameter.Value.Type != typeCode)
-                {
-                    throw new ParameterTypeMismatchException(
-                        $"Attempted to redefine parameter \"{name}\" from type {parameter.Value.Type} to {typeCode}!");
-                }
-
-                // TODO: Should we update the description if it doesn't match or throw an error?
-                return;
+                throw new ParameterAlreadyDeclaredException(name);
             }
 
             ParameterValue declaredValue = new ParameterValue { Type = typeCode };

@@ -13,19 +13,12 @@
  * limitations under the License.
  */
 
-using System;
-using rcl_interfaces.msg;
-
 namespace ROS2.ParameterHandling.Exceptions
 {
-    public class ParameterTypeMismatchException : ParameterException
+    public class ParameterAlreadyDeclaredException : ParameterException
     {
-        public ParameterTypeMismatchException(string message) : base(message)
-        {
-        }
-
-        public ParameterTypeMismatchException(string name, Type parameterType, Type requestedType) : this(
-            $"Parameter with name \"{name}\" is of type \"{parameterType.Name}\" it cannot be set with a value of type \"{requestedType.Name}\"!")
+        public ParameterAlreadyDeclaredException(string name)
+            : base($"Parameter with name \"{name}\" has already been declared!")
         {
         }
     }

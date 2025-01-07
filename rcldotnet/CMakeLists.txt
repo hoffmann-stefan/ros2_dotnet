@@ -74,10 +74,10 @@ set(CS_SOURCES
   ParameterHandling/ParameterHandler.cs
   ParameterHandling/SafeRclParamsHandle.cs
   ParameterHandling/Exceptions/InvalidParameterTypeException.cs
+  ParameterHandling/Exceptions/ParameterAlreadyDeclaredException.cs
   ParameterHandling/Exceptions/ParameterException.cs
   ParameterHandling/Exceptions/ParameterImmutableException.cs
   ParameterHandling/Exceptions/ParameterNotDeclaredException.cs
-  ParameterHandling/Exceptions/ParameterTypeMismatchException.cs
 )
 
 find_package(rcldotnet_common REQUIRED)
