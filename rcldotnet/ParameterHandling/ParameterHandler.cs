@@ -291,41 +291,51 @@ namespace ROS2
 
         public Parameter DeclareParameter(string name, IEnumerable<byte> defaultValue, ParameterDescriptor descriptor = null)
         {
+            if (defaultValue == null) throw new ArgumentNullException(nameof(defaultValue));
+
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_BYTE_ARRAY, value =>
             {
-                if (defaultValue != null) value.ByteArrayValue.AddRange(defaultValue);
+                value.ByteArrayValue.AddRange(defaultValue);
             }, descriptor);
         }
 
         public Parameter DeclareParameter(string name, IEnumerable<bool> defaultValue, ParameterDescriptor descriptor = null)
         {
+            if (defaultValue == null) throw new ArgumentNullException(nameof(defaultValue));
+
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_BOOL_ARRAY, value =>
             {
-                if (defaultValue != null) value.BoolArrayValue.AddRange(defaultValue);
+                value.BoolArrayValue.AddRange(defaultValue);
             }, descriptor);
         }
 
         public Parameter DeclareParameter(string name, IEnumerable<long> defaultValue, ParameterDescriptor descriptor = null)
         {
+            if (defaultValue == null) throw new ArgumentNullException(nameof(defaultValue));
+
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_INTEGER_ARRAY, value =>
             {
-                if (defaultValue != null) value.IntegerArrayValue.AddRange(defaultValue);
+                value.IntegerArrayValue.AddRange(defaultValue);
             }, descriptor);
         }
 
         public Parameter DeclareParameter(string name, IEnumerable<double> defaultValue, ParameterDescriptor descriptor = null)
         {
+            if (defaultValue == null) throw new ArgumentNullException(nameof(defaultValue));
+
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_DOUBLE_ARRAY, value =>
             {
-                if (defaultValue != null) value.DoubleArrayValue.AddRange(defaultValue);
+                value.DoubleArrayValue.AddRange(defaultValue);
             }, descriptor);
         }
 
         public Parameter DeclareParameter(string name, IEnumerable<string> defaultValue, ParameterDescriptor descriptor = null)
         {
+            if (defaultValue == null) throw new ArgumentNullException(nameof(defaultValue));
+
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_STRING_ARRAY, value =>
             {
-                if (defaultValue != null) value.StringArrayValue.AddRange(defaultValue);
+                value.StringArrayValue.AddRange(defaultValue);
             }, descriptor);
         }
 
