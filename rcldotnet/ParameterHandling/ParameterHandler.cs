@@ -236,7 +236,7 @@ namespace ROS2
             return overrideExists;
         }
 
-        private void DeclareParameter(string name, Type type, Action<ParameterValue> assignDefaultCallback, ParameterDescriptor descriptor = null)
+        private Parameter DeclareParameter(string name, Type type, Action<ParameterValue> assignDefaultCallback, ParameterDescriptor descriptor = null)
         {
             if (!_typeToParameterType.TryGetValue(type, out byte typeCode))
             {
@@ -283,67 +283,69 @@ namespace ROS2
                 List<Parameter> parameterObjects = new List<Parameter> { Parameter.CreateFromMessageDeepCopy(declaredParameter) };
                 postSetParameterCallbacks.Invoke(parameterObjects);
             }
+
+            return Parameter.CreateFromMessageDeepCopy(declaredParameter);
         }
 
-        public void DeclareParameter(string name, bool defaultValue = false, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, bool defaultValue = false, ParameterDescriptor descriptor = null)
         {
-            DeclareParameter(name, typeof(bool), value => { value.BoolValue = defaultValue; }, descriptor);
+            return DeclareParameter(name, typeof(bool), value => { value.BoolValue = defaultValue; }, descriptor);
         }
 
-        public void DeclareParameter(string name, int defaultValue = 0, ParameterDescriptor descriptor = null) => DeclareParameter(name, (long)defaultValue, descriptor);
+        public Parameter DeclareParameter(string name, int defaultValue = 0, ParameterDescriptor descriptor = null) => DeclareParameter(name, (long)defaultValue, descriptor);
 
-        public void DeclareParameter(string name, long defaultValue = 0L, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, long defaultValue = 0L, ParameterDescriptor descriptor = null)
         {
-            DeclareParameter(name, typeof(long), value => { value.IntegerValue = defaultValue; }, descriptor);
+            return DeclareParameter(name, typeof(long), value => { value.IntegerValue = defaultValue; }, descriptor);
         }
 
-        public void DeclareParameter(string name, float defaultValue = 0.0f, ParameterDescriptor descriptor = null) => DeclareParameter(name, (double)defaultValue, descriptor);
+        public Parameter DeclareParameter(string name, float defaultValue = 0.0f, ParameterDescriptor descriptor = null) => DeclareParameter(name, (double)defaultValue, descriptor);
 
-        public void DeclareParameter(string name, double defaultValue = 0.0, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, double defaultValue = 0.0, ParameterDescriptor descriptor = null)
         {
-            DeclareParameter(name, typeof(double), value => { value.DoubleValue = defaultValue; }, descriptor);
+            return DeclareParameter(name, typeof(double), value => { value.DoubleValue = defaultValue; }, descriptor);
         }
 
-        public void DeclareParameter(string name, string defaultValue = "", ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, string defaultValue = "", ParameterDescriptor descriptor = null)
         {
-            DeclareParameter(name, typeof(string), value => { value.StringValue = defaultValue; }, descriptor);
+            return DeclareParameter(name, typeof(string), value => { value.StringValue = defaultValue; }, descriptor);
         }
 
-        public void DeclareParameter(string name, IEnumerable<byte> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<byte> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            DeclareParameter(name, typeof(List<byte>), value =>
+            return DeclareParameter(name, typeof(List<byte>), value =>
             {
                 if (defaultValue != null) value.ByteArrayValue.AddRange(defaultValue);
             }, descriptor);
         }
 
-        public void DeclareParameter(string name, IEnumerable<bool> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<bool> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            DeclareParameter(name, typeof(List<bool>), value =>
+            return DeclareParameter(name, typeof(List<bool>), value =>
             {
                 if (defaultValue != null) value.BoolArrayValue.AddRange(defaultValue);
             }, descriptor);
         }
 
-        public void DeclareParameter(string name, IEnumerable<long> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<long> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            DeclareParameter(name, typeof(List<long>), value =>
+            return DeclareParameter(name, typeof(List<long>), value =>
             {
                 if (defaultValue != null) value.IntegerArrayValue.AddRange(defaultValue);
             }, descriptor);
         }
 
-        public void DeclareParameter(string name, IEnumerable<double> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<double> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            DeclareParameter(name, typeof(List<double>), value =>
+            return DeclareParameter(name, typeof(List<double>), value =>
             {
                 if (defaultValue != null) value.DoubleArrayValue.AddRange(defaultValue);
             }, descriptor);
         }
 
-        public void DeclareParameter(string name, IEnumerable<string> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<string> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            DeclareParameter(name, typeof(List<string>), value =>
+            return DeclareParameter(name, typeof(List<string>), value =>
             {
                 if (defaultValue != null) value.StringArrayValue.AddRange(defaultValue);
             }, descriptor);
