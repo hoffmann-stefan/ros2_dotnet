@@ -26,7 +26,7 @@ using ParameterMsg = rcl_interfaces.msg.Parameter;
 
 namespace ROS2
 {
-    public class ParameterHandler
+    internal class ParameterHandler
     {
         private static readonly IDictionary<Type, byte> _typeToParameterType = new Dictionary<Type, byte>
         {
