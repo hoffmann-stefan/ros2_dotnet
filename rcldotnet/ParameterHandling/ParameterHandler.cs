@@ -281,8 +281,13 @@ namespace ROS2
 
             PublishParametersDeclaredEvent(new List<ParameterMsg> { declaredParameter });
 
-            List<Parameter> parameterObjects = new List<Parameter> { Parameter.CreateFromMessage(declaredParameter) };
-            _postSetParameterCallbacks?.Invoke(parameterObjects);
+            // Copy into local variable to avoid races when another thread deregisters the last callback.
+            var postSetParameterCallbacks = _postSetParameterCallbacks;
+            if (postSetParameterCallbacks != null)
+            {
+                List<Parameter> parameterObjects = new List<Parameter> { Parameter.CreateFromMessage(declaredParameter) };
+                postSetParameterCallbacks.Invoke(parameterObjects);
+            }
         }
 
         public void DeclareParameter(string name, bool defaultValue = false, ParameterDescriptor descriptor = null)
