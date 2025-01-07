@@ -274,14 +274,10 @@ namespace ROS2
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_BOOL, value => { value.BoolValue = defaultValue; }, descriptor);
         }
 
-        public Parameter DeclareParameter(string name, int defaultValue, ParameterDescriptor descriptor = null) => DeclareParameter(name, (long)defaultValue, descriptor);
-
         public Parameter DeclareParameter(string name, long defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_INTEGER, value => { value.IntegerValue = defaultValue; }, descriptor);
         }
-
-        public Parameter DeclareParameter(string name, float defaultValue, ParameterDescriptor descriptor = null) => DeclareParameter(name, (double)defaultValue, descriptor);
 
         public Parameter DeclareParameter(string name, double defaultValue, ParameterDescriptor descriptor = null)
         {

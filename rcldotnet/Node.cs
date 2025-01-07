@@ -471,13 +471,7 @@ namespace ROS2
         public Parameter DeclareParameter(string name, bool defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, int defaultValue, ParameterDescriptor descriptor = null) =>
-            _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
-
         public Parameter DeclareParameter(string name, long defaultValue, ParameterDescriptor descriptor = null) =>
-            _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
-
-        public Parameter DeclareParameter(string name, float defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
         public Parameter DeclareParameter(string name, double defaultValue, ParameterDescriptor descriptor = null) =>
