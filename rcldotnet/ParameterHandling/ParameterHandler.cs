@@ -269,31 +269,31 @@ namespace ROS2
             return Parameter.CreateFromMessageDeepCopy(declaredParameter);
         }
 
-        public Parameter DeclareParameter(string name, bool defaultValue = false, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, bool defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_BOOL, value => { value.BoolValue = defaultValue; }, descriptor);
         }
 
-        public Parameter DeclareParameter(string name, int defaultValue = 0, ParameterDescriptor descriptor = null) => DeclareParameter(name, (long)defaultValue, descriptor);
+        public Parameter DeclareParameter(string name, int defaultValue, ParameterDescriptor descriptor = null) => DeclareParameter(name, (long)defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, long defaultValue = 0L, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, long defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_INTEGER, value => { value.IntegerValue = defaultValue; }, descriptor);
         }
 
-        public Parameter DeclareParameter(string name, float defaultValue = 0.0f, ParameterDescriptor descriptor = null) => DeclareParameter(name, (double)defaultValue, descriptor);
+        public Parameter DeclareParameter(string name, float defaultValue, ParameterDescriptor descriptor = null) => DeclareParameter(name, (double)defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, double defaultValue = 0.0, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, double defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_DOUBLE, value => { value.DoubleValue = defaultValue; }, descriptor);
         }
 
-        public Parameter DeclareParameter(string name, string defaultValue = "", ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, string defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_STRING, value => { value.StringValue = defaultValue; }, descriptor);
         }
 
-        public Parameter DeclareParameter(string name, IEnumerable<byte> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<byte> defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_BYTE_ARRAY, value =>
             {
@@ -301,7 +301,7 @@ namespace ROS2
             }, descriptor);
         }
 
-        public Parameter DeclareParameter(string name, IEnumerable<bool> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<bool> defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_BOOL_ARRAY, value =>
             {
@@ -309,7 +309,7 @@ namespace ROS2
             }, descriptor);
         }
 
-        public Parameter DeclareParameter(string name, IEnumerable<long> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<long> defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_INTEGER_ARRAY, value =>
             {
@@ -317,7 +317,7 @@ namespace ROS2
             }, descriptor);
         }
 
-        public Parameter DeclareParameter(string name, IEnumerable<double> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<double> defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_DOUBLE_ARRAY, value =>
             {
@@ -325,7 +325,7 @@ namespace ROS2
             }, descriptor);
         }
 
-        public Parameter DeclareParameter(string name, IEnumerable<string> defaultValue = null, ParameterDescriptor descriptor = null)
+        public Parameter DeclareParameter(string name, IEnumerable<string> defaultValue, ParameterDescriptor descriptor = null)
         {
             return DeclareParameter(name, ParameterTypeMsg.PARAMETER_STRING_ARRAY, value =>
             {

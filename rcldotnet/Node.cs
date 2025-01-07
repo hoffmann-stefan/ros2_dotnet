@@ -468,37 +468,37 @@ namespace ROS2
 
         #region Parameter Handling Passthroughs
 
-        public Parameter DeclareParameter(string name, bool defaultValue = false, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, bool defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, int defaultValue = 0, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, int defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, long defaultValue = 0L, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, long defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, float defaultValue = 0.0f, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, float defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, double defaultValue = 0.0, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, double defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, string defaultValue = "", ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, string defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, IEnumerable<byte> defaultValue = null, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, IEnumerable<byte> defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, IEnumerable<bool> defaultValue = null, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, IEnumerable<bool> defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, IEnumerable<long> defaultValue = null, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, IEnumerable<long> defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, IEnumerable<double> defaultValue = null, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, IEnumerable<double> defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
-        public Parameter DeclareParameter(string name, IEnumerable<string> defaultValue = null, ParameterDescriptor descriptor = null) =>
+        public Parameter DeclareParameter(string name, IEnumerable<string> defaultValue, ParameterDescriptor descriptor = null) =>
             _parameterHandler.DeclareParameter(name, defaultValue, descriptor);
 
         public void UndeclareParameter(string name) => _parameterHandler.UndeclareParameter(name);
