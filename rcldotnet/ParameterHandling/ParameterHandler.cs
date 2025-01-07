@@ -28,19 +28,6 @@ namespace ROS2
 {
     internal class ParameterHandler
     {
-        private static readonly IDictionary<Type, byte> _typeToParameterType = new Dictionary<Type, byte>
-        {
-            {typeof(bool), ParameterTypeMsg.PARAMETER_BOOL},
-            {typeof(long), ParameterTypeMsg.PARAMETER_INTEGER},
-            {typeof(double), ParameterTypeMsg.PARAMETER_DOUBLE},
-            {typeof(string), ParameterTypeMsg.PARAMETER_STRING},
-            {typeof(List<byte>), ParameterTypeMsg.PARAMETER_BYTE_ARRAY},
-            {typeof(List<bool>), ParameterTypeMsg.PARAMETER_BOOL_ARRAY},
-            {typeof(List<long>), ParameterTypeMsg.PARAMETER_INTEGER_ARRAY},
-            {typeof(List<double>), ParameterTypeMsg.PARAMETER_DOUBLE_ARRAY},
-            {typeof(List<string>), ParameterTypeMsg.PARAMETER_STRING_ARRAY}
-        };
-
         private readonly Node _node;
         private readonly IDictionary<string, ParameterMsg> _parameters = new Dictionary<string, ParameterMsg>();
         private readonly IDictionary<string, ParameterDescriptor> _descriptors = new Dictionary<string, ParameterDescriptor>();
@@ -236,13 +223,8 @@ namespace ROS2
             return overrideExists;
         }
 
-        private Parameter DeclareParameter(string name, Type type, Action<ParameterValue> assignDefaultCallback, ParameterDescriptor descriptor = null)
+        private Parameter DeclareParameter(string name, byte typeCode, Action<ParameterValue> assignDefaultCallback, ParameterDescriptor descriptor = null)
         {
-            if (!_typeToParameterType.TryGetValue(type, out byte typeCode))
-            {
-                throw new InvalidParameterTypeException(type);
-            }
-
             if (descriptor == null)
             {
                 descriptor = new ParameterDescriptor
@@ -289,31 +271,31 @@ namespace ROS2
 
         public Parameter DeclareParameter(string name, bool defaultValue = false, ParameterDescriptor descriptor = null)
         {
-            return DeclareParameter(name, typeof(bool), value => { value.BoolValue = defaultValue; }, descriptor);
+            return DeclareParameter(name, ParameterTypeMsg.PARAMETER_BOOL, value => { value.BoolValue = defaultValue; }, descriptor);
         }
 
         public Parameter DeclareParameter(string name, int defaultValue = 0, ParameterDescriptor descriptor = null) => DeclareParameter(name, (long)defaultValue, descriptor);
 
         public Parameter DeclareParameter(string name, long defaultValue = 0L, ParameterDescriptor descriptor = null)
         {
-            return DeclareParameter(name, typeof(long), value => { value.IntegerValue = defaultValue; }, descriptor);
+            return DeclareParameter(name, ParameterTypeMsg.PARAMETER_INTEGER, value => { value.IntegerValue = defaultValue; }, descriptor);
         }
 
         public Parameter DeclareParameter(string name, float defaultValue = 0.0f, ParameterDescriptor descriptor = null) => DeclareParameter(name, (double)defaultValue, descriptor);
 
         public Parameter DeclareParameter(string name, double defaultValue = 0.0, ParameterDescriptor descriptor = null)
         {
-            return DeclareParameter(name, typeof(double), value => { value.DoubleValue = defaultValue; }, descriptor);
+            return DeclareParameter(name, ParameterTypeMsg.PARAMETER_DOUBLE, value => { value.DoubleValue = defaultValue; }, descriptor);
         }
 
         public Parameter DeclareParameter(string name, string defaultValue = "", ParameterDescriptor descriptor = null)
         {
-            return DeclareParameter(name, typeof(string), value => { value.StringValue = defaultValue; }, descriptor);
+            return DeclareParameter(name, ParameterTypeMsg.PARAMETER_STRING, value => { value.StringValue = defaultValue; }, descriptor);
         }
 
         public Parameter DeclareParameter(string name, IEnumerable<byte> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            return DeclareParameter(name, typeof(List<byte>), value =>
+            return DeclareParameter(name, ParameterTypeMsg.PARAMETER_BYTE_ARRAY, value =>
             {
                 if (defaultValue != null) value.ByteArrayValue.AddRange(defaultValue);
             }, descriptor);
@@ -321,7 +303,7 @@ namespace ROS2
 
         public Parameter DeclareParameter(string name, IEnumerable<bool> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            return DeclareParameter(name, typeof(List<bool>), value =>
+            return DeclareParameter(name, ParameterTypeMsg.PARAMETER_BOOL_ARRAY, value =>
             {
                 if (defaultValue != null) value.BoolArrayValue.AddRange(defaultValue);
             }, descriptor);
@@ -329,7 +311,7 @@ namespace ROS2
 
         public Parameter DeclareParameter(string name, IEnumerable<long> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            return DeclareParameter(name, typeof(List<long>), value =>
+            return DeclareParameter(name, ParameterTypeMsg.PARAMETER_INTEGER_ARRAY, value =>
             {
                 if (defaultValue != null) value.IntegerArrayValue.AddRange(defaultValue);
             }, descriptor);
@@ -337,7 +319,7 @@ namespace ROS2
 
         public Parameter DeclareParameter(string name, IEnumerable<double> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            return DeclareParameter(name, typeof(List<double>), value =>
+            return DeclareParameter(name, ParameterTypeMsg.PARAMETER_DOUBLE_ARRAY, value =>
             {
                 if (defaultValue != null) value.DoubleArrayValue.AddRange(defaultValue);
             }, descriptor);
@@ -345,7 +327,7 @@ namespace ROS2
 
         public Parameter DeclareParameter(string name, IEnumerable<string> defaultValue = null, ParameterDescriptor descriptor = null)
         {
-            return DeclareParameter(name, typeof(List<string>), value =>
+            return DeclareParameter(name, ParameterTypeMsg.PARAMETER_STRING_ARRAY, value =>
             {
                 if (defaultValue != null) value.StringArrayValue.AddRange(defaultValue);
             }, descriptor);
