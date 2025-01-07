@@ -233,6 +233,19 @@ namespace ROS2
                     Type = typeCode
                 };
             }
+            else
+            {
+                // Copy the descriptor to avoid mutation of the internal storage via mutable object.
+                descriptor = RCLdotnet.DeepCopyMessage(descriptor);
+
+                // Override the name and type in the provided descriptor.
+                // rclpy and rclcpp do this in here:
+                // - https://github.com/ros2/rclpy/blob/4e8b071127228d5dace5aebf61d02260ecb91253/rclpy/rclpy/node.py#L1303
+                // - https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/src/rclcpp/node_interfaces/node_parameters.cpp#L460
+                // - https://github.com/ros2/rclcpp/blob/a0a2a067d84fd6a38ab4f71b691d51ca5aa97ba5/rclcpp/src/rclcpp/node_interfaces/node_parameters.cpp#L287-L289
+                descriptor.Name = name;
+                descriptor.Type = typeCode;
+            }
 
             // This check doesn't happen atomically, but so is it in rclcpp and
             // rclpy as far as I can see as well. Maybe check if this should be
@@ -252,7 +265,6 @@ namespace ROS2
                 assignDefaultCallback?.Invoke(declaredParameter.Value);
             }
 
-            // TODO: ensure returned descriptor names and types are set correctly.
             _parameters.Add(name, declaredParameter);
             _descriptors.Add(name, descriptor);
 

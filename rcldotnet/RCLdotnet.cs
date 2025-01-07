@@ -1581,6 +1581,20 @@ namespace ROS2
             }
         }
 
+        internal static T DeepCopyMessage<T>(T message)
+            where T : IRosMessage, new()
+        {
+            // TODO: provide deep copy functionality in generated message code as public methods.
+            // This is a workaround for now.
+            using (SafeHandle messageHandle = MessageStaticMemberCache<T>.CreateMessageHandle())
+            {
+                WriteToMessageHandle(message, messageHandle);
+                var result = new T();
+                ReadFromMessageHandle(result, messageHandle);
+                return result;
+            }
+        }
+
         internal static string GetStringFromNativeDelegate(RCLdotnetDelegates.NativeRCLGetStringType nativeDelegate, SafeHandle safeHandle)
         {
             bool mustRelease = false;
