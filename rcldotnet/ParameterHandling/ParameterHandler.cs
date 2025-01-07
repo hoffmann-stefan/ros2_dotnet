@@ -220,7 +220,7 @@ namespace ROS2
             _publisherEvent.Publish(parameterEvent);
         }
 
-        private bool TryGetParameterOverride(string name, ref ParameterValue parameterOverride)
+        private bool TryGetParameterOverride(string name, ParameterValue parameterOverride)
         {
             if (!RCLdotnet.HasGlobalParameterOverrides) return false;
 
@@ -267,7 +267,7 @@ namespace ROS2
 
             ParameterValue declaredValue = new ParameterValue { Type = typeCode };
             ParameterMsg declaredParameter = new ParameterMsg { Name = name, Value = declaredValue };
-            if (!TryGetParameterOverride(name, ref declaredValue))
+            if (!TryGetParameterOverride(name, declaredValue))
             {
                 // The callback assures the provided value is copied to avoid
                 // mutation of the internal parameter values via mutable
