@@ -54,7 +54,7 @@ namespace ROS2
         public string Name { get; }
         public ParameterType Type { get; }
 
-        public Parameter Create<T>(string name, T value)
+        public static Parameter Create<T>(string name, T value)
         {
             if (typeof(T) == typeof(bool))
             {
