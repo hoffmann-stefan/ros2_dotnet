@@ -114,33 +114,45 @@ bool rcldotnet_params_try_get_parameter_from_node_params(const rcl_node_params_t
 
   rcl_variant_t *rcl_param_value = &node_params->parameter_values[param_index];
 
+  // If the parameter is found, but the type from args or yaml does not match,
+  // don't copy the value but return true to not use the default value specified
+  // in declare parameters. This is how rclpy does it.
   switch (param_value->type) {
     case rcl_interfaces__msg__ParameterType__PARAMETER_BOOL:
+      if (rcl_param_value->bool_value == NULL) return true;
       param_value->bool_value = *rcl_param_value->bool_value;
     break;
     case rcl_interfaces__msg__ParameterType__PARAMETER_INTEGER:
+      if (rcl_param_value->integer_value == NULL) return true;
       param_value->integer_value = *rcl_param_value->integer_value;
     break;
     case rcl_interfaces__msg__ParameterType__PARAMETER_DOUBLE:
+      if (rcl_param_value->double_value == NULL) return true;
       param_value->double_value = *rcl_param_value->double_value;
     break;
     case rcl_interfaces__msg__ParameterType__PARAMETER_STRING:
+      if (rcl_param_value->string_value == NULL) return true;
       rcldotnet_params_copy_to_rosidl_runtime_c__String(&param_value->string_value, rcl_param_value->string_value);
     break;
     case rcl_interfaces__msg__ParameterType__PARAMETER_BYTE_ARRAY:
       // Byte array parameter loading from YAML not implemented in RCL.
+      //if (rcl_param_value->byte_array_value == NULL) return true;
       //rcldotnet_params_copy_yaml_array_to_parameter_array((rosidl_runtime_c__void__Sequence *)&param_value->byte_array_value, (rcl_void_array_t *)rcl_param_value->byte_array_value, sizeof(char));
     break;
     case rcl_interfaces__msg__ParameterType__PARAMETER_BOOL_ARRAY:
+      if (rcl_param_value->bool_array_value == NULL) return true;
       rcldotnet_params_copy_yaml_array_to_parameter_array((rosidl_runtime_c__void__Sequence *)&param_value->bool_array_value, (rcl_void_array_t *)rcl_param_value->bool_array_value, sizeof(bool));
     break;
     case rcl_interfaces__msg__ParameterType__PARAMETER_INTEGER_ARRAY:
+      if (rcl_param_value->integer_array_value == NULL) return true;
       rcldotnet_params_copy_yaml_array_to_parameter_array((rosidl_runtime_c__void__Sequence *)&param_value->integer_array_value, (rcl_void_array_t *)rcl_param_value->integer_array_value, sizeof(int64_t));
     break;
     case rcl_interfaces__msg__ParameterType__PARAMETER_DOUBLE_ARRAY:
+      if (rcl_param_value->double_array_value == NULL) return true;
       rcldotnet_params_copy_yaml_array_to_parameter_array((rosidl_runtime_c__void__Sequence *)&param_value->double_array_value, (rcl_void_array_t *)rcl_param_value->double_array_value, sizeof(double));
     break;
     case rcl_interfaces__msg__ParameterType__PARAMETER_STRING_ARRAY:
+      if (rcl_param_value->string_array_value == NULL) return true;
       rcldotnet_params_copy_yaml_string_array_to_parameter_string_array(&param_value->string_array_value, rcl_param_value->string_array_value);
     break;
   }
