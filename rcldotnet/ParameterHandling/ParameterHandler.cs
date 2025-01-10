@@ -217,7 +217,13 @@ namespace ROS2
             {
                 RCLdotnet.WriteToMessageHandle(parameterOverride, messageHandle);
                 overrideExists = ParameterDelegates.native_rcl_try_get_parameter(messageHandle, RCLdotnet.GlobalParameterOverrideHandle, _node.Handle, name) != 0;
-                RCLdotnet.ReadFromMessageHandle(parameterOverride, messageHandle);
+                if (overrideExists)
+                {
+                    // Avoid reading from the message handle if the parameter is
+                    // not overridden as null checks or failed allocations in
+                    // native_rcl_try_get_parameter return false as well.
+                    RCLdotnet.ReadFromMessageHandle(parameterOverride, messageHandle);
+                }
             }
 
             return overrideExists;
